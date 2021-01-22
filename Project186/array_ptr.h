@@ -22,7 +22,6 @@ public:
         raw_ptr_ = raw_ptr;
     }
 
-
     /*explicit ArrayPtr(Type* begin, Type* end) noexcept {
         raw_ptr_ = raw_ptr;
     }*/

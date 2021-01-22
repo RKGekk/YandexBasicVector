@@ -3,3 +3,17 @@
 ################################################################################
 
 *.ipch
+*.db
+*.opendb
+*.db-wal
+*.db-shm
+*.suo
+/.vs
+*.tlog
+*.recipe
+*.log
+*.idb
+*.pdb
+/Project186/x64/Debug/Source.obj
+*.exe
+*.ilk

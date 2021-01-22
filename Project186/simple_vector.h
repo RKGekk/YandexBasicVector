@@ -171,9 +171,6 @@ public:
 	Iterator Erase(Iterator pos) {
 		size_t dist = std::distance(begin(), pos);
 		Iterator it = begin() + dist;
-		//for (ConstIterator it = pos + 1; it != cend(); ++it) {
-		//	
-		//}
 		std::copy(std::make_move_iterator(pos + 1), std::make_move_iterator(end()), it);
 		--size_;
 		return begin() + dist;
@@ -244,7 +241,7 @@ public:
 		if (new_size == size_) { return; }
 		if (new_size > capacity_) {
 			ArrayPtr<Type> tmp(new_size);
-			std::copy(items_.Get(), items_.Get() + size_, tmp.Get());
+			std::copy(std::make_move_iterator(items_.Get()), std::make_move_iterator(items_.Get()) + size_, tmp.Get());
 			std::fill(tmp.Get() + size_, tmp.Get() + new_size, Type());
 			items_.swap(tmp);
 			size_ = new_size;
