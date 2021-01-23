@@ -29,9 +29,7 @@ public:
     // Запрещаем копирование
     ArrayPtr(const ArrayPtr&) = delete;
 
-    ArrayPtr(ArrayPtr&& other) noexcept : raw_ptr_(other.raw_ptr_) {
-        other.raw_ptr_ = nullptr;
-    };
+    ArrayPtr(ArrayPtr&& other) noexcept : raw_ptr_(std::exchange(other.raw_ptr_, nullptr)) {};
 
     ~ArrayPtr() {
         delete[] raw_ptr_;
@@ -43,8 +41,7 @@ public:
     ArrayPtr& operator=(ArrayPtr&& other) {
         if (this == &other) return *this;
         delete[] raw_ptr_;
-        raw_ptr_ = other.raw_ptr_;
-        other.raw_ptr_ = nullptr;
+        raw_ptr_ = std::exchange(other.raw_ptr_, nullptr);
         return *this;
     }
 
@@ -52,9 +49,7 @@ public:
     // После вызова метода указатель на массив должен обнулиться
     [[nodiscard]]
     Type* Release() noexcept {
-        Type* temp = raw_ptr_;
-        raw_ptr_ = nullptr;
-        return temp;
+        return std::exchange(raw_ptr_, nullptr);
     }
 
     // Возвращает ссылку на элемент массива с индексом index
@@ -79,9 +74,7 @@ public:
 
     // Обменивается значениям указателя на массив с объектом other
     void swap(ArrayPtr& other) noexcept {
-        Type* temp = raw_ptr_;
-        raw_ptr_ = other.raw_ptr_;
-        other.raw_ptr_ = temp;
+        std::swap(raw_ptr_, other.raw_ptr_);
     }
 
 private:

@@ -50,20 +50,23 @@ public:
 		std::copy(other.begin(), other.end(), items_.Get());
 	}
 
-	SimpleVector(SimpleVector&& other) noexcept : items_(std::move(other.items_)), size_(other.size_), capacity_(other.capacity_) {
-		other.size_ = 0;
-		other.capacity_ = 0;
-	}
+	SimpleVector(SimpleVector&& other) noexcept : items_(std::move(other.items_)), size_(std::exchange(other.size_, 0)), capacity_(std::exchange(other.capacity_, 0)) {}
 
 	SimpleVector& operator=(const SimpleVector& rhs) {
 		if (this == &rhs) {
 			return *this;
 		}
-		ArrayPtr<Type> tmp(rhs.capacity_);
-		std::copy(rhs.begin(), rhs.begin() + rhs.size_, tmp.Get());
-		items_.swap(tmp);
-		size_ = rhs.size_;
-		capacity_ = rhs.capacity_;
+		SimpleVector<Type> tmp(rhs);
+		swap(tmp);
+		return *this;
+	}
+
+	SimpleVector& operator=(SimpleVector&& rhs) {
+		if (this == &rhs) {
+			return *this;
+		}
+		SimpleVector<Type> tmp(std::move(rhs));
+		swap(tmp);
 		return *this;
 	}
 
@@ -156,7 +159,9 @@ public:
 
 	// "Удаляет" последний элемент вектора. Вектор не должен быть пустым
 	void PopBack() noexcept {
-		--size_;
+		if (!IsEmpty()) {
+			--size_;
+		}
 	}
 
 	// Удаляет элемент вектора в указанной позиции
